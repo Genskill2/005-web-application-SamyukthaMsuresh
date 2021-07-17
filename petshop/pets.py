@@ -1,7 +1,9 @@
 import datetime
 
 from flask import Blueprint
+
 from flask import render_template, request, redirect, url_for, jsonify
+
 from flask import g
 
 from . import db
@@ -20,8 +22,7 @@ def format_date(d):
 def search(field, value):
     # TBD
     return ""
-
- conn = db.get_db()
+    conn = db.get_db()
     cursor = conn.cursor()
     oby = request.args.get("order_by", "id") # TODO. This is currently not used. 
     order = request.args.get("order", "asc")
@@ -87,8 +88,16 @@ def edit(pid):
     elif request.method == "POST":
         description = request.form.get('description')
         sold = request.form.get("sold")
+        print(sold)
         # TODO Handle sold
+        cursor.execute("update pet set description =? where id =?",(description,pid))
+        if sold:
+            cursor.execute("update pet  set sold = date('now') where id =?;",(pid,))
+            print('check')
+        conn.commit()
+        conn.close()
         return redirect(url_for("pets.pet_info", pid=pid), 302)
+
         
     
 
